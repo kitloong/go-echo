@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/kitloong/go-echo/app/controllers"
+	"github.com/kitloong/go-echo/app/http/controllers"
 	"github.com/labstack/echo/v4"
 )
 
