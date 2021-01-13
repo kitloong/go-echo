@@ -16,6 +16,7 @@ type ConfigServiceProvider struct {
 const (
 	configPath      = "./config"
 	configExtension = ".yaml"
+	dotEnvPath      = "./.env"
 )
 
 func check(e error) {
@@ -26,19 +27,37 @@ func check(e error) {
 
 // Boot service
 func (p *ConfigServiceProvider) Boot(e *echo.Echo) {
+	// Load server env
+	viper.AutomaticEnv()
+
+	p.loadDotEnv()
+
+	p.loadYaml()
+}
+
+func (p *ConfigServiceProvider) loadDotEnv() {
+	viper.SetConfigType("env")
+	env := p.getFileContent(dotEnvPath)
+
+	err := viper.MergeConfig(bytes.NewBuffer(env))
+	check(err)
+}
+
+func (p *ConfigServiceProvider) loadYaml() {
 	viper.SetConfigType("yaml")
 
-	files := p.getConfigFiles()
+	files := p.getYamlFiles()
 
 	for _, file := range files {
-		content := p.getConfigFileContent(file)
+		content := p.getFileContent(configPath + string(os.PathSeparator) + file.Name())
 
 		err := viper.MergeConfig(bytes.NewBuffer(content))
 		check(err)
 	}
 }
 
-func (p *ConfigServiceProvider) getConfigFiles() []os.FileInfo {
+// Get all yaml files from configPath
+func (p *ConfigServiceProvider) getYamlFiles() []os.FileInfo {
 	var files []os.FileInfo
 	err := filepath.Walk(configPath, func(path string, file os.FileInfo, err error) error {
 		if err != nil {
@@ -59,8 +78,8 @@ func (p *ConfigServiceProvider) getConfigFiles() []os.FileInfo {
 	return files
 }
 
-func (p *ConfigServiceProvider) getConfigFileContent(file os.FileInfo) []byte {
-	content, err := ioutil.ReadFile(configPath + string(os.PathSeparator) + file.Name())
+func (p *ConfigServiceProvider) getFileContent(filename string) []byte {
+	content, err := ioutil.ReadFile(filename)
 	check(err)
 
 	return content
