@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 // ConfigServiceProvider read yaml file and load into config.Get
@@ -31,8 +32,8 @@ func (p *ConfigServiceProvider) Boot(e *echo.Echo) {
 	viper.AutomaticEnv()
 
 	p.loadDotEnv()
-
 	p.loadYaml()
+	p.injectEnv()
 }
 
 func (p *ConfigServiceProvider) loadDotEnv() {
@@ -53,6 +54,23 @@ func (p *ConfigServiceProvider) loadYaml() {
 
 		err := viper.MergeConfig(bytes.NewBuffer(content))
 		check(err)
+	}
+}
+
+// Inject value from dotenv into yaml file
+// Find ${PATTERN} and replace with dotenv value
+// If ${PATTERN} is not defined in dotenv, set key to empty
+func (p *ConfigServiceProvider) injectEnv() {
+	for _, key := range viper.AllKeys() {
+		rgx := regexp.MustCompile(`\${(.*)}`)
+		rs := rgx.FindStringSubmatch(viper.GetString(key))
+		if len(rs) > 0 {
+			if viper.Get(rs[1]) != nil {
+				viper.Set(key, viper.Get(rs[1]))
+			} else {
+				viper.Set(key, "")
+			}
+		}
 	}
 }
 

@@ -5,9 +5,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Register routes
-func Register(e *echo.Echo) {
-	// Define routes
-	e.GET("/", controllers.User().Index)
-	e.GET("users/:id", controllers.User().Show)
+// API routes
+func API(api *echo.Group) {
+	// Define api routes
+	api.GET("/users", controllers.User().Index)
+	api.GET("/users/:id", controllers.User().Show)
 }

@@ -99,7 +99,7 @@ server.go
 
 ## ORM
 
-1. go get -u gorm.io/gorm
+1. https://gorm.io/index.html
 
 ## Configuration
 
@@ -108,3 +108,7 @@ server.go
 ## String, rune, byte
 
 1. https://blog.golang.org/strings
+
+## Type assertion
+
+1. https://tour.golang.org/methods/15

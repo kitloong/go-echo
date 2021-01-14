@@ -6,7 +6,9 @@ require (
 	github.com/cosmtrek/air v1.21.2 // indirect
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.10.0 // indirect
+	github.com/gorilla/sessions v1.2.1
 	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/labstack/echo-contrib v0.9.0
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/spf13/viper v1.7.1

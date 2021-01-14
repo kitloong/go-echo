@@ -1,2 +1,4 @@
 app:
-  name: "Go Echo"
+  name: ${APP_NAME}
+  test: ${TEST}
+  timezone: Asia/Shanghai
