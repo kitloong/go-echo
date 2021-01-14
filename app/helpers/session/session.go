@@ -3,14 +3,14 @@ package session
 import (
 	"fmt"
 	"github.com/gorilla/sessions"
-	"github.com/kitloong/go-echo/config"
+	config2 "github.com/kitloong/go-echo/app/helpers/config"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
 // Store of session
 func Store() *sessions.CookieStore {
-	return sessions.NewCookieStore([]byte(config.Get("session.secret").(string)))
+	return sessions.NewCookieStore([]byte(config2.Get("session.secret").(string)))
 }
 
 // Get value by key
