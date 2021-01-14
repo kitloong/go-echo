@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Hello for test
 type Hello struct {
 }
 
