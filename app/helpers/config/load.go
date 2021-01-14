@@ -1,18 +1,13 @@
-package providers
+package config
 
 import (
 	"bytes"
-	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 )
-
-// ConfigServiceProvider read yaml file and load into config.Get
-type ConfigServiceProvider struct {
-}
 
 const (
 	configPath      = "./config"
@@ -26,31 +21,31 @@ func check(e error) {
 	}
 }
 
-// Boot service
-func (p *ConfigServiceProvider) Boot(e *echo.Echo) {
+// Load config files
+func Load() {
 	// Load server env
 	viper.AutomaticEnv()
 
-	p.loadDotEnv()
-	p.loadYaml()
-	p.injectEnv()
+	loadDotEnv()
+	loadYaml()
+	injectEnv()
 }
 
-func (p *ConfigServiceProvider) loadDotEnv() {
+func loadDotEnv() {
 	viper.SetConfigType("env")
-	env := p.getFileContent(dotEnvPath)
+	env := getFileContent(dotEnvPath)
 
 	err := viper.MergeConfig(bytes.NewBuffer(env))
 	check(err)
 }
 
-func (p *ConfigServiceProvider) loadYaml() {
+func loadYaml() {
 	viper.SetConfigType("yaml")
 
-	files := p.getYamlFiles()
+	files := getYamlFiles()
 
 	for _, file := range files {
-		content := p.getFileContent(configPath + string(os.PathSeparator) + file.Name())
+		content := getFileContent(configPath + string(os.PathSeparator) + file.Name())
 
 		err := viper.MergeConfig(bytes.NewBuffer(content))
 		check(err)
@@ -60,7 +55,7 @@ func (p *ConfigServiceProvider) loadYaml() {
 // Inject value from dotenv into yaml file
 // Find ${PATTERN} and replace with dotenv value
 // If ${PATTERN} is not defined in dotenv, set key to empty
-func (p *ConfigServiceProvider) injectEnv() {
+func injectEnv() {
 	for _, key := range viper.AllKeys() {
 		rgx := regexp.MustCompile(`\${(.*)}`)
 		rs := rgx.FindStringSubmatch(viper.GetString(key))
@@ -75,7 +70,7 @@ func (p *ConfigServiceProvider) injectEnv() {
 }
 
 // Get all yaml files from configPath
-func (p *ConfigServiceProvider) getYamlFiles() []os.FileInfo {
+func getYamlFiles() []os.FileInfo {
 	var files []os.FileInfo
 	err := filepath.Walk(configPath, func(path string, file os.FileInfo, err error) error {
 		if err != nil {
@@ -96,7 +91,7 @@ func (p *ConfigServiceProvider) getYamlFiles() []os.FileInfo {
 	return files
 }
 
-func (p *ConfigServiceProvider) getFileContent(filename string) []byte {
+func getFileContent(filename string) []byte {
 	content, err := ioutil.ReadFile(filename)
 	check(err)
 
