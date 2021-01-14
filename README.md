@@ -40,10 +40,19 @@ ____________________________________O/_______
 
 ```
 - app
+    - helpers
+        - config
+            config.go
+        - session
+            session.go
     - http
         - controllers
+            - user.go
         - middleware
     - models
+        - user.go
+    - providers
+        - route_service_provider.go
     - repositories
     - services
 - bootstrap
@@ -57,6 +66,7 @@ ____________________________________O/_______
         - en
         - ja
 - routes
+    - api.go
 .env
 go.mod
 server.go
